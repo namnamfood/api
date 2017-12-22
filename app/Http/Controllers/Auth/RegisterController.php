@@ -3,10 +3,13 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\User;
+use App\Models\User;
+use App\Notifications\UserRegistered;
 use Illuminate\Foundation\Auth\RegistersUsers;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Passport\Client;
 
 class RegisterController extends Controller
 {
@@ -49,7 +52,7 @@ class RegisterController extends Controller
     protected function validator(array $data)
     {
         return Validator::make($data, [
-            'name' => 'required|string|max:255',
+            'fullname' => 'required|string|max:255',
             'email' => 'required|string|email|max:255|unique:users',
             'password' => 'required|string|min:6|confirmed',
         ]);
@@ -59,15 +62,62 @@ class RegisterController extends Controller
      * Create a new user instance after a valid registration.
      *
      * @param  Request $request
-     * @return \App\User
+     * @return \App\Models\User
      */
     protected function create(Request $request)
     {
-        return User::create([
-            'name' => $request->name,
-            'email' => $request->email,
-            'password' => bcrypt($request->password),
+        /**
+         * Get a validator for an incoming registration request.
+         *
+         * @param  array $request
+         * @return \Illuminate\Contracts\Validation\Validator
+         */
+        $valid = validator($request->only('email', 'fullname', 'phone', 'password'), [
+            'fullname' => 'required|string|max:255',
+            'email' => 'string|email|max:255|unique:users',
+            'phone' => 'required|string|max:255|unique:users',
+            'password' => 'required|string|min:6',
         ]);
+
+        if ($valid->fails()) {
+            $errors = $valid->errors()->all();
+            return response()->json([
+                'error' => true,
+                'message' => $errors]);
+        }
+
+        $data = request()->only('email', 'fullname', 'phone', 'password');
+        $activation_code = rand(100000, 999999);
+
+
+        $user = User::create([
+            'fullname' => $data['fullname'],
+            'email' => $data['email'],
+            'phone' => $data['phone'],
+            'verification_code' => $activation_code,
+            'password' => bcrypt($data['password'])
+        ]);
+
+
+        // send verification code to device
+        $user->notify(new UserRegistered($user));
+        $client = Client::where('password_client', 1)->first();
+
+        $request->request->add([
+            'grant_type' => 'password',
+            'client_id' => $client->id,
+            'client_secret' => $client->secret,
+            'username' => $data['email'],
+            'password' => $data['password'],
+            'scope' => null,
+        ]);
+
+        // Fire off the internal request.
+        $token = Request::create(
+            'oauth/token',
+            'POST'
+        );
+        return Route::dispatch($token);
     }
 
 }
