@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers\Auth;
 
+use App\Helpers\JSON;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Carbon\Carbon;
 use Laravel\Socialite\Facades\Socialite;
 
 class SocialAuthController extends Controller
@@ -95,7 +97,7 @@ class SocialAuthController extends Controller
         if ($user) {
             // update the avatar and provider that might have changed
             $user->provider = $driver;
-            $user->save;
+            $user->save();
             $token = $user->createToken('Access Token')->accessToken;
 
         } else {
@@ -105,24 +107,19 @@ class SocialAuthController extends Controller
                 'email' => $providerUser->getEmail(),
                 'cover' => $providerUser->getAvatar(),
                 'provider' => $driver,
-                'provider_id' => $providerUser->getId(),
+                'confirmed_at' => Carbon::now(),
                 // user can use reset password to create a password
                 'password' => ''
             ]);
 
             $token = $user->createToken('Access Token')->accessToken;
-
-
         }
 
-        $responseParams = [
-            'token_type' => 'Bearer',
-            'access_token' => $token,
-            'user' => $user
+        $data = [
+            'access_token' => $token
         ];
 
-
-        return response()->json($responseParams);
+        return JSON::response(false, 'login success!', $data, 200);
     }
 
     /**

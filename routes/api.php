@@ -1,5 +1,6 @@
 <?php
 
+use App\Helpers\JSON;
 use Illuminate\Http\Request;
 
 /*
@@ -15,10 +16,10 @@ use Illuminate\Http\Request;
 // Guest routes
 Route::post('login', 'Auth\LoginController@login');
 Route::post('register', 'Auth\RegisterController@create');
-
+Route::post('password/email', 'Auth\ResetPasswordController@getResetToken');
+Route::post('password/reset', 'Auth\ResetPasswordController@reset');
 // Social Auth
-Route::get('auth/social', 'Auth\SocialAuthController@show')->name('social.login');
-Route::get('oauth/{driver}', 'Auth\SocialAuthController@redirectToProvider')->name('social.oauth');
+Route::get('oauth/{driver}', 'Auth\SocialAuthController@redirectToProvider');
 Route::get('oauth/{driver}/callback', 'Auth\SocialAuthController@handleProviderCallback');
 
 // Activate user
@@ -29,11 +30,7 @@ Route::middleware(['auth:api', 'confirmedUser'])->group(function () {
 
     // Auth user route
     Route::get('/user', function (Request $request) {
-        return response()->json([
-            'error' => false,
-            'message' => null,
-            'user' => $request->user()
-        ]);
+        return JSON::response(false, null, $request->user(), 200);
     });
 });
 
