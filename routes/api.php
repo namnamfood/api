@@ -25,7 +25,7 @@ Route::get('oauth/{driver}/callback', 'Auth\SocialAuthController@handleProviderC
 // Activate user
 Route::post('user/activate', 'Auth\ActivationController@activate');
 
-// Auth routes for confirmed users
+// User area for auth and confirmed users
 Route::middleware(['auth:api', 'confirmedUser'])->group(function () {
 
     // Auth user route
@@ -33,6 +33,16 @@ Route::middleware(['auth:api', 'confirmedUser'])->group(function () {
         return JSON::response(false, null, $request->user(), 200);
     });
 });
+
+// Admin area
+Route::prefix('admin')->namespace('Admin')->middleware(['auth:admin-api'])->group(function () {
+
+    // Auth user route
+    Route::get('/user', function (Request $request) {
+        return JSON::response(false, null, $request->user(), 200);
+    });
+});
+
 
 Route::get('/test', function () {
     return "hello";
