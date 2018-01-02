@@ -41,6 +41,8 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth:admin-api'])->grou
     Route::get('/user', function (Request $request) {
         return JSON::response(false, null, $request->user(), 200);
     });
+
+    Route::resource('roles', 'AdminController');
 });
 
 

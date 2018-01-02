@@ -20,5 +20,9 @@ class DatabaseSeeder extends Seeder
             'phone' => '+994504200000',
             'password' => bcrypt('secret')
         ]);
+        // Role comes before User seeder here.
+        $this->call(RoleTableSeeder::class);
+        // Admin seeder will use the roles above created.
+        $this->call(AdminTableSeeder::class);
     }
 }
