@@ -48,8 +48,8 @@ class RegionController extends Controller
      */
     public function show($id)
     {
-        $region = Region::find($id);
-        return $region->streets;
+        $region = Region::with('streets')->find($id);
+        return JSON::response(false, 'Region and its streets', $region, 200);
     }
 
     /**
