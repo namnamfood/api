@@ -44,7 +44,7 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth:admin-api'])->grou
 
     Route::resource('roles', 'AdminController');
 });
-
+Route::resource('regions', 'RegionController');
 
 Route::get('/test', function () {
     return "hello";
