@@ -43,6 +43,7 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth:admin-api'])->grou
     });
 
     Route::resource('roles', 'AdminController');
+    Route::resource('branches', 'BranchController');
 });
 Route::resource('regions', 'RegionController');
 
