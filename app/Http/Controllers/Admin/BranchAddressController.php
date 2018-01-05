@@ -82,6 +82,7 @@ class BranchAddressController extends Controller
      */
     public function destroy($id)
     {
-        //
+        BranchAddress::destroy($id);
+        return JSON::response(false, 'Branch address is deleted!', null, 200);
     }
 }
