@@ -37,14 +37,17 @@ class BranchAddressController extends Controller
         ];
         // -- Validate and display error messages
         $data = $request->only(['branch_id', 'street_id', 'packet_price']);
-
+        $branchAddress = BranchAddress::where('branch_id', $data['branch_id'])->where('street_id', $data['street_id'])->first();
+        if ($branchAddress) {
+            return JSON::response(true, 'This address already exists on this branch', null, 400);
+        }
         $validator = Validator::make($data, $rules);
         if ($validator->fails()) {
             return JSON::response(true, 'Error occured', $validator->errors()->all(), 400);
         }
 
-        $branch = BranchAddress::create($data);
-        return JSON::response(false, 'New branch address is created!', $branch, 200);
+        $newBranchAddress = BranchAddress::create($data);
+        return JSON::response(false, 'New branch address is created!', $newBranchAddress, 200);
     }
 
     /**
@@ -68,10 +71,13 @@ class BranchAddressController extends Controller
     public function update(Request $request, $id)
     {
         $data = $request->only(['branch_id', 'street_id', 'packet_price']);
-        $branch = BranchAddress::find($id);
 
-        $branch->update($data);
-        return JSON::response(false, 'Branch address is updated!', $branch, 200);
+        $branchAddress = BranchAddress::find($id);
+        if ($branchAddress->street_id == $data['street_id'] && $branchAddress->branch_id == $data['branch_id']) {
+            return JSON::response(true, 'This address already exists on this branch', $branchAddress, 400);
+        }
+        $branchAddress->update($data);
+        return JSON::response(false, 'Branch address is updated!', $branchAddress, 200);
     }
 
     /**
