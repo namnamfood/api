@@ -25,6 +25,7 @@ Route::get('oauth/{driver}/callback', 'Auth\SocialAuthController@handleProviderC
 // Activate user
 Route::post('user/activate', 'Auth\ActivationController@activate');
 
+Route::resource('branches', 'BranchController');
 // User area for auth and confirmed users
 Route::middleware(['auth:api', 'confirmedUser'])->group(function () {
 

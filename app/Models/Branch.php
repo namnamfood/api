@@ -10,4 +10,11 @@ class Branch extends Model
         'name', 'region_id', 'description', 'cover', 'latitude', 'longitude', 'open_time', 'close_time'
     ];
 
+    /**
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function addresses()
+    {
+        return $this->hasMany(BranchAddress::class);
+    }
 }
