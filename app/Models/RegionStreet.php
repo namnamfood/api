@@ -9,4 +9,9 @@ class RegionStreet extends Model
     protected $fillable = [
         'name', 'latitude', 'longitude',
     ];
+
+    public function region()
+    {
+        return $this->belongsTo(Region::class);
+    }
 }

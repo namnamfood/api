@@ -68,7 +68,7 @@ class BranchController extends Controller
      */
     public function show($id)
     {
-        $branch = Branch::find($id);
+        $branch = Branch::with('addresses.street')->find($id);
         return JSON::response(false, 'Related branch', $branch, 200);
     }
 

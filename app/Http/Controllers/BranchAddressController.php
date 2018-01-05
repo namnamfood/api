@@ -2,11 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Helpers\JSON;
-use App\Models\Branch;
 use Illuminate\Http\Request;
 
-class BranchController extends Controller
+class BranchAddressController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,8 +13,7 @@ class BranchController extends Controller
      */
     public function index()
     {
-        $branches = Branch::all();
-        return JSON::response(false, 'All available branches', $branches, 200);
+        //
     }
 
     /**
@@ -32,7 +29,7 @@ class BranchController extends Controller
     /**
      * Store a newly created resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return \Illuminate\Http\Response
      */
     public function store(Request $request)
@@ -43,19 +40,18 @@ class BranchController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function show($id)
     {
-        $branch = Branch::with('addresses.street')->find($id);
-        return JSON::response(false, 'Related branch', $branch, 200);
+        //
     }
 
     /**
      * Show the form for editing the specified resource.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function edit($id)
@@ -66,8 +62,8 @@ class BranchController extends Controller
     /**
      * Update the specified resource in storage.
      *
-     * @param  \Illuminate\Http\Request $request
-     * @param  int $id
+     * @param  \Illuminate\Http\Request  $request
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function update(Request $request, $id)
@@ -78,7 +74,7 @@ class BranchController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param  int $id
+     * @param  int  $id
      * @return \Illuminate\Http\Response
      */
     public function destroy($id)
