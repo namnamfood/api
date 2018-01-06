@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Helpers\FilterBy;
 use App\Helpers\ImageMaker;
 use App\Helpers\JSON;
 use App\Http\Controllers\Controller;
@@ -15,12 +16,50 @@ class BranchController extends Controller
     /**
      * Display a listing of the resource.
      *
+     * @param Request $request
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
+        if ($request->lat && $request->lon) {
+            $lat = $request->lat;
+            $lon = $request->lon;
+        }
+        // default values
+        $lat = 40.4160617;
+        $lon = 49.839813899999996;
         $branches = Branch::all();
+
+        foreach ($branches as $branch) {
+            $distance = FilterBy::distance($lat, $lon, $branch->latitude, $branch->longitude);
+            $branch->distance = $distance;
+        }
         return JSON::response(false, 'All available branches', $branches, 200);
+    }
+
+    public function nearMeBranches(Request $request)
+    {
+        if ($request->lat && $request->lon) {
+            $lat = $request->lat;
+            $lon = $request->lon;
+        }
+        if ($request->radius) {
+            $radius = $request->radius;
+        }
+        // default values
+        $radius = 4.00;
+        $lat = 40.4160617;
+        $lon = 49.839813899999996;
+        $branches = Branch::all();
+        $nearMeBranches = [];
+        foreach ($branches as $branch) {
+            $distance = FilterBy::distance($lat, $lon, $branch->latitude, $branch->longitude);
+            $branch->distance = $distance;
+            if ($branch->distance <= $radius) {
+                array_push($nearMeBranches, $branch);
+            }
+        }
+        return JSON::response(false, 'All available branches', $nearMeBranches, 200);
     }
 
     /**
@@ -69,6 +108,9 @@ class BranchController extends Controller
     public function show($id)
     {
         $branch = Branch::with('addresses.street')->find($id);
+        $distance = FilterBy::distance(40.4160617, 49.839813899999996, $branch->latitude, $branch->longitude, 'K');
+        $branch->distance = $distance;
+
         return JSON::response(false, 'Related branch', $branch, 200);
     }
 
