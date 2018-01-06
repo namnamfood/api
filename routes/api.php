@@ -25,6 +25,9 @@ Route::get('oauth/{driver}/callback', 'Auth\SocialAuthController@handleProviderC
 // Activate user
 Route::post('user/activate', 'Auth\ActivationController@activate');
 
+// Image routes
+Route::get('images/branches/{branch_id}', 'ImageController@branchImage');
+
 Route::resource('branches', 'BranchController');
 Route::get('nearme', 'BranchController@nearMeBranches');
 

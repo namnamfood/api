@@ -21,46 +21,62 @@ class BranchController extends Controller
      */
     public function index(Request $request)
     {
-        if ($request->lat && $request->lon) {
-            $lat = $request->lat;
-            $lon = $request->lon;
+        // -- define required parameters
+        $rules = [
+            'lat' => 'required',
+            'lng' => 'required',
+        ];
+        // -- Validate and display error messages
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return JSON::response(true, 'Error occured', $validator->errors()->all(), 400);
         }
-        // default values
-        $lat = 40.4160617;
-        $lon = 49.839813899999996;
+        $lat = $request->lat;
+        $lng = $request->lng;
         $branches = Branch::all();
 
         foreach ($branches as $branch) {
-            $distance = FilterBy::distance($lat, $lon, $branch->latitude, $branch->longitude);
+            $distance = FilterBy::distance($lat, $lng, $branch->latitude, $branch->longitude);
             $branch->distance = $distance;
         }
+        // sort by distance
+        $branches = collect($branches)->sortBy('distance')->values()->all();
         return JSON::response(false, 'All available branches', $branches, 200);
     }
 
     public function nearMeBranches(Request $request)
     {
-        if ($request->lat && $request->lon) {
-            $lat = $request->lat;
-            $lon = $request->lon;
+        // -- define required parameters
+        $rules = [
+            'radius' => 'required',
+            'lat' => 'required',
+            'lng' => 'required',
+        ];
+        // -- Validate and display error messages
+        $validator = Validator::make($request->all(), $rules);
+        if ($validator->fails()) {
+            return JSON::response(true, 'Error occured', $validator->errors()->all(), 400);
         }
-        if ($request->radius) {
-            $radius = $request->radius;
-        }
-        // default values
-        $radius = 4.00;
-        $lat = 40.4160617;
-        $lon = 49.839813899999996;
+
+        $radius = 4; // default value
+        $lat = $request->lat;
+        $lng = $request->lng;
+        $radius = $request->radius;
         $branches = Branch::all();
         $nearMeBranches = [];
         foreach ($branches as $branch) {
-            $distance = FilterBy::distance($lat, $lon, $branch->latitude, $branch->longitude);
+            $distance = FilterBy::distance($lat, $lng, $branch->latitude, $branch->longitude);
             $branch->distance = $distance;
-            if ($branch->distance <= $radius) {
+            if ($radius >= $branch->distance) {
                 array_push($nearMeBranches, $branch);
             }
         }
+
+        // sort by distance
+        $nearMeBranches = collect($nearMeBranches)->sortBy('distance')->values()->all();
         return JSON::response(false, 'All available branches', $nearMeBranches, 200);
     }
+
 
     /**
      * Store a newly created resource in storage.
