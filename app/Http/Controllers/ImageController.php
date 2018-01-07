@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Branch;
+use App\Models\Category;
 
 class ImageController extends Controller
 {
@@ -24,6 +25,27 @@ class ImageController extends Controller
         // Now it is time to display image
         $path = storage_path('app/uploads/branches/' . $branch->cover);
         $image = response()->download($path, $branch->cover);
+        return $image;
+    }
+
+    /**
+     * Display the category cover.
+     *
+     * @param $category_id
+     * @return \Illuminate\Http\Response
+     */
+    public function categoryImage($category_id)
+    {
+        // All good so show brand image
+        $category = Category::find($category_id);
+        if (!$category->cover) {
+            $path = storage_path('app/static/no_image.png');
+            $image = response()->download($path, $category->cover);
+            return $image;
+        }
+        // Now it is time to display image
+        $path = storage_path('app/uploads/categories/' . $category->cover);
+        $image = response()->download($path, $category->cover);
         return $image;
     }
 }
