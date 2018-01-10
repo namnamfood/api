@@ -28,11 +28,14 @@ Route::post('user/activate', 'Auth\ActivationController@activate');
 // Image routes
 Route::get('images/branches/{branch_id}', 'ImageController@branchImage');
 Route::get('images/categories/{category_id}', 'ImageController@categoryImage');
+Route::get('images/brands/{brand_id}', 'ImageController@brandImage');
+
 
 
 Route::resource('branches', 'BranchController');
 Route::get('nearme', 'BranchController@nearMeBranches');
 Route::resource('categories', 'CategoryController');
+Route::resource('brands', 'BrandController');
 
 // User area for auth and confirmed users
 Route::middleware(['auth:api', 'confirmedUser'])->group(function () {
@@ -55,6 +58,8 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth:admin-api'])->grou
     Route::resource('branches', 'BranchController');
     Route::resource('addresses', 'BranchAddressController');
     Route::resource('categories', 'CategoryController');
+    Route::resource('brands', 'BrandController');
+
 
 });
 Route::resource('regions', 'RegionController');

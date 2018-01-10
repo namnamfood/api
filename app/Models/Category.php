@@ -9,7 +9,6 @@ class Category extends Model
 {
     use SoftDeletes;
 
-    protected $cover_url;
     protected $appends = ['cover_url'];
     /**
      * The attributes that are mass assignable.
