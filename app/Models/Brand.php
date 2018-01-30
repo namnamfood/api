@@ -20,4 +20,14 @@ class Brand extends Model
     }
 
 
+    /**
+     * This method returns available products which belongs to brand
+     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     */
+    public function products()
+    {
+        return $this->hasMany(Product::class);
+    }
+
+
 }

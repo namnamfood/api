@@ -36,6 +36,7 @@ Route::resource('branches', 'BranchController');
 Route::get('nearme', 'BranchController@nearMeBranches');
 Route::resource('categories', 'CategoryController');
 Route::resource('brands', 'BrandController');
+Route::resource('products', 'ProductController');
 
 // User area for auth and confirmed users
 Route::middleware(['auth:api', 'confirmedUser'])->group(function () {
@@ -59,6 +60,7 @@ Route::prefix('admin')->namespace('Admin')->middleware(['auth:admin-api'])->grou
     Route::resource('addresses', 'BranchAddressController');
     Route::resource('categories', 'CategoryController');
     Route::resource('brands', 'BrandController');
+    Route::resource('products', 'ProductController');
 
 
 });
