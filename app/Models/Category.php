@@ -85,7 +85,8 @@ class Category extends Model
     {
         parent::boot();
 
-        static::deleting(function ($category) { // before delete() method call this
+        static::deleting(function ($category) {
+            // before delete() method call this
             $category->children()->delete();
         });
     }

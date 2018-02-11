@@ -27,10 +27,6 @@ class ProductController extends Controller
         $branch_id = $request->get('branch_id');
         $category_id = $request->get('category_id');
         $brand_id = $request->get('brand_id');
-        $products = Product::where('branch_id', $branch_id)
-            ->where('category_id', $category_id)
-            ->get();
-
         if ($brand_id) {
             $products = Product::where('branch_id', $branch_id)
                 ->where('category_id', $category_id)
@@ -38,6 +34,9 @@ class ProductController extends Controller
                 ->get();
             return JSON::response(false, 'available products', $products, 200);
         }
+        $products = Product::where('branch_id', $branch_id)
+            ->where('category_id', $category_id)
+            ->get();
         return JSON::response(false, 'available products', $products, 200);
     }
 
