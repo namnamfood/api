@@ -89,7 +89,7 @@ class DiscountController extends Controller
                 $category = Category::find($request->category_id);
                 // if category is parent category(have children)
                 // then make discount its sub categories products
-                if ($category->children) {
+                if ($category->children->count()) {
                     $products = array();
                     foreach ($category->children as $child) {
                         foreach ($child->products as $product) {
